@@ -1,6 +1,10 @@
 [package]
 name = "phile"
 version = "0.1.0"
+authors = ["Matthew Haynes"]
 edition = "2024"
+repository = "https://github.com/matthewhaynesonline/phile"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
