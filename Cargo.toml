@@ -1,3 +1,5 @@
+[workspace]
+
 [package]
 name = "phile"
 version = "0.1.0"
@@ -7,4 +9,56 @@ repository = "https://github.com/matthewhaynesonline/phile"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 
+[workspace.dependencies]
+anyhow = "1.0.99"
+askama = "0.14.0"
+candle-core = { git = "https://github.com/huggingface/candle.git", version = "0.9.1" }
+candle-flash-attn = { git = "https://github.com/huggingface/candle.git", version = "0.9.1" }
+candle-nn = { git = "https://github.com/huggingface/candle.git", version = "0.9.1" }
+candle-transformers = { git = "https://github.com/huggingface/candle.git", version = "0.9.1" }
+candle-utils = { git = "https://github.com/matthewhaynesonline/candle-utils.git", version = "0.9.1", rev = "bc4bc18" }
+clap = "4.5.46"
+rust-embed = "8.7.2"
+serde = "1"
+serde_json = "1"
+tokenizers = "0.21.0"
+
 [dependencies]
+anyhow = { workspace = true }
+askama = { workspace = true }
+candle-core = { workspace = true }
+candle-flash-attn = { workspace = true, optional = true }
+candle-nn = { workspace = true }
+candle-transformers = { workspace = true }
+candle-utils = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+rust-embed = { workspace = true, optional = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tokenizers = { workspace = true }
+
+[features]
+default = ["gemma"]
+
+gemma = []
+phi = []
+
+embed = ["dep:rust-embed"]
+
+accelerate = [
+  "candle-core/accelerate",
+  "candle-transformers/accelerate",
+  # "candle-utils/accelerate",
+]
+
+cuda = [
+  "candle-core/cuda",
+  "candle-core/cudnn",
+  "candle-transformers/cuda",
+  "candle-transformers/flash-attn",
+  "candle-utils/cuda",
+]
+
+flash-attn = ["cuda", "candle-transformers/flash-attn", "dep:candle-flash-attn"]
+
+metal = ["candle-core/metal", "candle-transformers/metal", "candle-utils/metal"]

@@ -1,0 +1,11 @@
+{# // https://huggingface.co/microsoft/Phi-3-mini-4k-instruct#chat-format #}
+
+{# {{ bos_token }} #}
+{% for message in messages %}
+<|{{self.get_role_string(message.role)}}|>
+{{message.content}}<|end|>
+{% endfor %}
+{% if add_generation_prompt %}
+<|{{self.get_role_string(assistant_role)}}|>
+
+{% endif%}
