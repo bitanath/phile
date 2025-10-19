@@ -57,6 +57,7 @@ pub(crate) struct Engine {
     tos: TokenOutputStream,
     eos_token: u32,
     max_context_len: usize,
+    token_history: Vec<u32>,
     render_template: RenderTemplateFn,
 }
 
@@ -94,6 +95,7 @@ impl Engine {
             logits_processor: LogitsProcessor::from_sampling(seed, sampling_params),
             tos,
             eos_token,
+            token_history: Vec::new(),
             max_context_len,
             render_template,
         })
@@ -124,8 +126,9 @@ impl Engine {
             .map_err(anyhow::Error::msg)?;
 
         let input_tokens: Vec<u32> = tokens.get_ids().to_vec();
+        self.token_history.extend_from_slice(&input_tokens);
 
-        self.fit_to_context(&input_tokens, to_sample)
+        self.fit_to_context(&self.token_history, to_sample)
     }
 
     fn fit_to_context(&self, input_tokens: &[u32], to_sample: usize) -> Result<Vec<u32>> {
@@ -182,6 +185,8 @@ impl Engine {
         let logits = self.model.forward(&input, index_pos)?;
         let logits = logits.squeeze(0)?;
         let next_token = self.logits_processor.sample(&logits)?;
+
+        self.token_history.push(next_token);
 
         Ok(next_token)
     }
