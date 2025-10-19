@@ -13,6 +13,16 @@ Single file llm, but in _rust_. phi + file = phile.
 
 See: https://github.com/huggingface/candle/pull/3104
 
+### Cross compile
+
+https://github.com/cross-rs/cross
+
+#### Linux x86 CPU
+
+```sh
+$ cross build --target x86_64-unknown-linux-gnu --features embed,openssl
+```
+
 ### Resources
 
 1. Template playground
