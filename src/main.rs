@@ -10,6 +10,7 @@
 
 use anyhow::Result;
 use clap::Parser;
+use rustyline::{DefaultEditor, error::ReadlineError};
 
 pub(crate) mod clap_utils;
 use clap_utils::get_styled_terminal_output;
@@ -27,7 +28,14 @@ use models::gemma::phi_build as build_engine;
 #[command(version, about, long_about = None, styles=get_styled_terminal_output())]
 pub(crate) struct Cli {
     /// input string (positional / default arg)
-    input: String,
+    input: Option<String>,
+
+    #[arg(
+        short = 'i',
+        default_value_t = false,
+        help = "Interactive mode. NOTE: when in interactive mode the input arg will be ignored."
+    )]
+    interactive: bool,
 
     #[arg(short = 'v', default_value_t = false, help = "Verbose output")]
     verbose: bool,
@@ -69,7 +77,42 @@ fn main() -> Result<()> {
     let to_sample = 100;
     let mut engine = build_engine(model_dir_name, tokenizers_file, weights_file, cli.verbose)?;
 
-    let _ = engine.generate(&cli.input, to_sample)?;
+    if cli.interactive {
+        let mut rl = DefaultEditor::new()?;
+
+        loop {
+            let readline = rl.readline(">> ");
+
+            match readline {
+                Ok(line) => {
+                    rl.add_history_entry(line.as_str())?;
+                    let _ = engine.generate(&line, to_sample)?;
+
+                    // Output empty line so Rustyline doesn't overwrite output
+                    #[allow(clippy::println_empty_string)]
+                    {
+                        println!("");
+                    }
+                }
+                Err(ReadlineError::Interrupted) | Err(ReadlineError::Eof) => {
+                    exit_handler();
+                }
+                Err(err) => {
+                    println!("Error: {:?}", err);
+                    std::process::exit(1);
+                }
+            }
+        }
+    } else if let Some(input) = &cli.input {
+        let _ = engine.generate(input, to_sample)?;
+    } else {
+        println!("No input provided");
+    }
 
     Ok(())
+}
+
+fn exit_handler() {
+    println!("Goodbye...");
+    std::process::exit(0);
 }
