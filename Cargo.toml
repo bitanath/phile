@@ -52,7 +52,7 @@ default = ["gemma"]
 gemma = []
 phi = []
 
-embed = ["dep:rust-embed"]
+embed = ["dep:rust-embed", "rust-embed/debug-embed"]
 
 accelerate = [
   "candle-core/accelerate",
