@@ -1,6 +1,14 @@
 # phile
 
+<img src="slop-logo.png" width="320" height="320" alt="phile logo of a crab holding a file">
+
 Single file llm, but in _rust_. phi + file = phile.
+
+**Use [llamafile](https://github.com/Mozilla-Ocho/llamafile) if you want to get work done, but look here if you want to learn.**
+
+### Video Guide
+
+https://youtu.be/t625C42mnWw
 
 ### Setup
 
