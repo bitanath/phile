@@ -1,0 +1,13 @@
+[package]
+name = "phile-inject"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "phile-inject"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0.99"
+flate2 = "1.1"
+tar = "0.4"

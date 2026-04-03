@@ -1,39 +1,35 @@
-// See <https://github.com/huggingface/candle/blob/main/candle-examples/single-file-binary-builder/build.rs>
-
 use std::{
+    env,
     fs::{self, File},
     io::{self, copy},
     path::{Path, PathBuf},
 };
 
 use anyhow::{Context, Result};
-use ureq::{Body, http::Response};
+use ureq::{http::Response, Body};
 
 const TOKENIZER_FILE: &str = "tokenizer.json";
 
 fn main() -> Result<()> {
     println!("cargo::rerun-if-changed=build.rs");
 
-    // Default to Gemma
-    let build_phi = std::env::var("CARGO_FEATURE_PHI").is_ok();
-    let _build_gemma = std::env::var("CARGO_FEATURE_GEMMA").is_ok();
+    let build_phi = env::var("CARGO_FEATURE_PHI").is_ok();
 
     let model_dir: &'static str;
     let weights_file: &'static str;
     let tokenizer_url: &'static str;
     let weights_url: &'static str;
 
-    // Use specific commit vs main to reduce chance of URL breaking later from directory layout changes, etc.
     if build_phi {
         model_dir = "microsoft--Phi-3-mini-4k-instruct-gguf";
         weights_file = "Phi-3-mini-4k-instruct-q4.gguf";
         tokenizer_url = "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct/resolve/0a67737cc96d2554230f90338b163bc6380a2a85/tokenizer.json";
         weights_url = "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf/resolve/999f761fe19e26cf1a339a5ec5f9f201301cbb83/Phi-3-mini-4k-instruct-q4.gguf";
     } else {
-        model_dir = "bartowski--google_gemma-3-1b-it-qat-GGUF";
-        weights_file = "google_gemma-3-1b-it-qat-Q4_0.gguf";
-        tokenizer_url = "https://huggingface.co/google/gemma-3-1b-it-qat-q4_0-unquantized/resolve/a6692c1945954f4aa39a17b8dfba4a7e62db3d4f/tokenizer.json";
-        weights_url = "https://huggingface.co/bartowski/google_gemma-3-1b-it-qat-GGUF/resolve/074329a7942d6a61a3748a80ed1bbc9e2d7d0e18/google_gemma-3-1b-it-qat-Q4_0.gguf";
+        model_dir = "bartowski--google_gemma-3-4b-it-qat-GGUF";
+        weights_file = "google_gemma-3-4b-it-qat-Q4_0.gguf";
+        tokenizer_url = "https://huggingface.co/google/gemma-3-4b-it-qat-q4_0-unquantized/resolve/b02f2b2916142396dace61d2e8c3412cdcbd1559/tokenizer.json";
+        weights_url = "https://huggingface.co/bartowski/google_gemma-3-4b-it-qat-GGUF/resolve/0e3202d4c2315e5d2796d83c476e0961e4680513/google_gemma-3-4b-it-qat-Q4_0.gguf";
     }
 
     let dest_path = PathBuf::from("models").join(model_dir);

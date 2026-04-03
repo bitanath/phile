@@ -10,7 +10,7 @@
 
 use anyhow::Result;
 use clap::Parser;
-use rustyline::{DefaultEditor, error::ReadlineError};
+use rustyline::{error::ReadlineError, DefaultEditor};
 
 pub(crate) mod clap_utils;
 use clap_utils::get_styled_terminal_output;
@@ -44,16 +44,6 @@ pub(crate) struct Cli {
 #[cfg(all(feature = "gemma", feature = "phi"))]
 compile_error!("Cannot enable both 'gemma' and 'phi' features simultaneously");
 
-#[cfg(all(feature = "gemma", feature = "embed"))]
-#[derive(rust_embed::Embed)]
-#[folder = "models/bartowski--google_gemma-3-1b-it-qat-GGUF"]
-pub(crate) struct LlmModelAssets;
-
-#[cfg(all(feature = "phi", feature = "embed"))]
-#[derive(rust_embed::Embed)]
-#[folder = "models/microsoft--Phi-3-mini-4k-instruct-gguf"]
-pub(crate) struct LlmModelAssets;
-
 /// Where the magic happens.
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -64,8 +54,8 @@ fn main() -> Result<()> {
 
     #[cfg(feature = "gemma")]
     {
-        model_dir_name = "bartowski--google_gemma-3-1b-it-qat-GGUF";
-        weights_file = "google_gemma-3-1b-it-qat-Q4_0.gguf";
+        model_dir_name = "bartowski--google_gemma-3-4b-it-qat-GGUF";
+        weights_file = "google_gemma-3-4b-it-qat-Q4_0.gguf";
     }
 
     #[cfg(feature = "phi")]
