@@ -1,9 +1,9 @@
 ## My changes so far:
-[x] Removed AWS since idk what that was
-[x] Align zip like utility to append files
-[x] Two stage build process in order to append to folder
-[ ] Actual acceleration and optimize TTFT
-[ ] Cleanup injection function
+- [x] Removed AWS since idk what that was
+- [x] Align zip like utility to append files
+- [x] Two stage build process in order to append to folder
+- [ ] Actual acceleration and optimize TTFT
+- [ ] Cleanup injection function
 
 ```bash
 CARGO_BUILD_JOBS=8 cargo build --release --workspace --features metal,embed
